@@ -1,40 +1,71 @@
 function Start-HuduProcedure {
     <#
     .SYNOPSIS
-    Kickoff a procedure as a live process instance
+    Start a run from an existing company procedure.
 
     .DESCRIPTION
-    Starts a new process instance from a template or existing procedure.
-    Optionally associates the process with an asset or renames it.
+    Creates a new run by calling POST /api/v1/procedures/{id}/kickoff.
 
-    .PARAMETER Id
-    ID of the procedure to kickoff
+    Only company procedures can be kicked off.
+    Global templates must first be copied to a company procedure.
+    If the target is already a run, kickoff is not performed.
+
+    .PARAMETER ProcedureId
+    ID of the procedure to kick off.
 
     .PARAMETER AssetId
-    Optional asset ID to attach the new process to
+    Optional asset ID to associate with the new run.
 
     .PARAMETER Name
-    Optional new name for the kicked off procedure instance
-
-    .EXAMPLE
-    Kickoff-HuduProcedure -Id 42 -AssetId 1001 -Name "Quarterly Maintenance Run"
+    Optional name for the new run.
     #>
     [CmdletBinding()]
-    param (
-        [Parameter(Mandatory)] [int]$Id,
+    param(
+        [Parameter(Mandatory)]
+        [Alias('Id')]
+        [int]$ProcedureId,
+
         [int]$AssetId,
+
         [string]$Name
     )
 
+    $procedureContext = Get-HuduProcedureContext -ProcedureId $ProcedureId
+    if (-not $procedureContext) {
+        throw "Could not determine procedure context for procedure ID $ProcedureId."
+    }
+
+    if ($procedureContext.IsRun) {
+        Write-Warning "Procedure ID $ProcedureId is already a run. Kick off is not applicable."
+        return $null
+    }
+
+
+    if ($procedureContext.CanKickoff -ne $true) {
+        Write-Warning "Procedure ID $ProcedureId cannot be kicked off. Ensure it is a company procedure and not already a run."
+        return $null
+    }
+
+    if (
+        $procedureContext.IsGlobal -or
+        $procedureContext.ProcessType -eq 'global' -or
+        [string]::IsNullOrWhiteSpace([string]$procedureContext.CompanyId)
+    ) {
+        Write-Warning "Procedure ID $ProcedureId is a global template. It must be copied to a company procedure before it can be kicked off."
+        return $null
+    }    
+
     $params = @{}
-    if ($AssetId) { $params.asset_id = $AssetId }
-    if ($Name)    { $params.name     = $Name }
+    if ($PSBoundParameters.ContainsKey('AssetId')) { $params.asset_id = $AssetId }
+    if ($PSBoundParameters.ContainsKey('Name'))    { $params.name = $Name }
 
     try {
-        $res = Invoke-HuduRequest -Method POST -Resource "/api/v1/procedures/$Id/kickoff" -Params $params
-        return $res
-    } catch {
-        Write-Warning "Failed to kickoff procedure ID $Id"
+        
+        $r = Invoke-HuduRequest -Method POST -Resource "/api/v1/procedures/$ProcedureId/kickoff" -Params $params
+        return ($r.procedure ?? $r)
+    }
+    catch {
+        Write-Warning "Failed to kick off procedure ID $ProcedureId- $($_.Exception.Message)"
         return $null
     }
 }

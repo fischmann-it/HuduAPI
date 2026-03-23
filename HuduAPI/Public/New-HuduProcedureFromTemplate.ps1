@@ -1,45 +1,71 @@
 function New-HuduProcedureFromTemplate {
     <#
     .SYNOPSIS
-    Create a new procedure from an existing template
+    Create a new process from a global template.
 
     .DESCRIPTION
-    Creates a new procedure (template or process) by cloning an existing one.
-    If no company_id is provided, a global template is created.
+    Calls POST /api/v1/procedures/{id}/create_from_template.
 
-    .PARAMETER Id
-    ID of the template procedure to clone
+    The source procedure must be a global template.
+
+    Behavior:
+    - If CompanyId is supplied, creates a company-specific process.
+    - If CompanyId is omitted, creates another global template copy.
+
+    This cmdlet creates a process/template copy only. It does not create a run.
+
+    .PARAMETER ProcedureId
+    ID of the global template to copy from.
 
     .PARAMETER CompanyId
-    Optional company ID. If omitted, creates a global template.
+    Optional company ID for the new process.
+    If omitted, a new global template copy is created.
 
     .PARAMETER Name
-    Optional new name for the new procedure
+    Optional new name for the copied process.
 
     .PARAMETER Description
-    Optional description for the new procedure
-
-    .EXAMPLE
-    New-HuduProcedureFromTemplate -Id 50 -CompanyId 456 -Name "Client Onboarding Clone"
+    Optional new description for the copied process.
     #>
     [CmdletBinding()]
-    param (
-        [Parameter(Mandatory)] [int]$Id,
+    param(
+        [Parameter(Mandatory)]
+        [Alias('Id')]
+        [int]$ProcedureId,
+
         [int]$CompanyId,
+
         [string]$Name,
+
         [string]$Description
     )
 
-    $params = @{}
-    if ($CompanyId)   { $params.company_id = $CompanyId }
-    if ($Name)        { $params.name = $Name }
-    if ($Description) { $params.description = $Description }
+    $procedureContext = Get-HuduProcedureContext -ProcedureId $ProcedureId
+    if (-not $procedureContext) {
+        throw "Could not determine procedure context for procedure ID $ProcedureId."
+    }
 
-    try {
-        $res = Invoke-HuduRequest -Method POST -Resource "/api/v1/procedures/$Id/create_from_template" -Params $params
-        return $res.procedure
-    } catch {
-        Write-Warning "Failed to create procedure from template ID $Id"
+    if ($procedureContext.IsRun) {
+        Write-Warning "Procedure ID $ProcedureId is a run. Only global templates can be copied with create_from_template."
         return $null
     }
+
+    if (-not $procedureContext.IsGlobal) {
+        Write-Warning "Procedure ID $ProcedureId is not a global template. Only global templates can be copied with create_from_template."
+        return $null
+
+    $params = @{}
+    if ($PSBoundParameters.ContainsKey('CompanyId'))   { $params.company_id = $CompanyId }
+    if ($PSBoundParameters.ContainsKey('Name'))        { $params.name = $Name }
+    if ($PSBoundParameters.ContainsKey('Description')) { $params.description = $Description }
+
+    try {
+        $res = Invoke-HuduRequest -Method POST -Resource "/api/v1/procedures/$ProcedureId/create_from_template" -Params $params
+        return ($res.procedure ?? $res)
+    }
+    catch {
+        Write-Warning "Failed to create procedure from template ID $ProcedureId- $($_.Exception.Message)"
+        return $null
+    }
+}
 }
