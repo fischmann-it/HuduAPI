@@ -8,7 +8,7 @@ schema: 2.0.0
 # New-HuduProcedure
 
 ## SYNOPSIS
-Create a new Hudu procedure (process)
+Create a new Hudu process template.
 
 ## SYNTAX
 
@@ -18,7 +18,16 @@ New-HuduProcedure [-Name] <String> [[-Description] <String>] [[-CompanyId] <Int3
 ```
 
 ## DESCRIPTION
-Calls the Hudu API to create a procedure without tasks.
+Creates a new process template by calling POST /api/v1/procedures.
+
+This endpoint creates process templates only.
+It does not create runs
+(active instances).
+To create a run from a process, use Start-HuduProcedure.
+
+Behavior:
+- If CompanyId is omitted, a global template is created.
+- If CompanyId is provided, a company-specific process is created.
 
 ## EXAMPLES
 
@@ -27,10 +36,15 @@ Calls the Hudu API to create a procedure without tasks.
 New-HuduProcedure -Name "Onboarding" -Description "New employee onboarding" -CompanyId 123
 ```
 
+### EXAMPLE 2
+```
+New-HuduProcedure -Name "Global Onboarding Template" -Description "Template for all companies"
+```
+
 ## PARAMETERS
 
 ### -Name
-Name of the procedure
+Name of the process.
 
 ```yaml
 Type: String
@@ -45,7 +59,7 @@ Accept wildcard characters: False
 ```
 
 ### -Description
-Description text for the procedure
+Description text for the process.
 
 ```yaml
 Type: String
@@ -60,7 +74,8 @@ Accept wildcard characters: False
 ```
 
 ### -CompanyId
-ID of the company the procedure belongs to
+Company ID for a company-specific process.
+If omitted, a global template is created.
 
 ```yaml
 Type: Int32
@@ -75,7 +90,8 @@ Accept wildcard characters: False
 ```
 
 ### -CompanyTemplate
-If true, this will create a company template instead of a company procedure
+Legacy/compatibility parameter.
+Included only when explicitly specified.
 
 ```yaml
 Type: Boolean

@@ -14,8 +14,8 @@ Create a new procedure task
 
 ```
 New-HuduProcedureTask [-Name] <String> [-ProcedureId] <Int32> [[-Description] <String>] [[-Priority] <String>]
- [[-UserId] <Int32>] [[-AssignedUsers] <Int32[]>] [[-DueDate] <String>] [[-Position] <Int32>]
- [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [[-UserId] <Int32>] [[-AssignedUsers] <Int32[]>] [[-DueDate] <String>] [[-Position] <Int32>] [-RunTask]
+ [-AutoKickoff] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -146,6 +146,37 @@ Aliases:
 Required: False
 Position: 8
 Default value: 0
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -RunTask
+{{ Fill RunTask Description }}
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -AutoKickoff
+ignored in legacy method
+ignored in legacy method
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

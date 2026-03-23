@@ -5,20 +5,21 @@ online version:
 schema: 2.0.0
 ---
 
-# Set-HuduProcedure
+# Copy-HuduProcedure
 
 ## SYNOPSIS
-Update an existing Hudu process or run.
+Duplicate an existing process.
 
 ## SYNTAX
 
 ```
-Set-HuduProcedure [-Id] <Int32> [[-Name] <String>] [[-Description] <String>] [[-CompanyId] <Int32>]
- [[-Archived] <Boolean>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+Copy-HuduProcedure [-ProcedureId] <Int32> [-CompanyId] <Int32> [[-Name] <String>] [[-Description] <String>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Calls POST /api/v1/procedures/{id}/duplicate to create a new company process
+by duplicating an existing process.
 
 ## EXAMPLES
 
@@ -31,13 +32,13 @@ PS C:\> {{ Add example code here }}
 
 ## PARAMETERS
 
-### -Id
-{{ Fill Id Description }}
+### -ProcedureId
+ID of the process to duplicate.
 
 ```yaml
 Type: Int32
 Parameter Sets: (All)
-Aliases:
+Aliases: Id
 
 Required: True
 Position: 1
@@ -46,23 +47,23 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Name
-{{ Fill Name Description }}
+### -CompanyId
+Company ID for the new duplicated process.
 
 ```yaml
-Type: String
+Type: Int32
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 2
-Default value: None
+Default value: 0
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Description
-{{ Fill Description Description }}
+### -Name
+Optional new name for the duplicated process.
 
 ```yaml
 Type: String
@@ -76,31 +77,16 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -CompanyId
-{{ Fill CompanyId Description }}
+### -Description
+Optional new description for the duplicated process.
 
 ```yaml
-Type: Int32
+Type: String
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: 4
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Archived
-{{ Fill Archived Description }}
-
-```yaml
-Type: Boolean
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 5
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
