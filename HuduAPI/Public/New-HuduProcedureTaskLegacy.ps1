@@ -44,7 +44,8 @@ function New-HuduProcedureTask {
         [int[]]$AssignedUsers,
         [string]$DueDate,
         [int]$Position,
-        [switch]$RunTask
+        [switch]$RunTask, # ignored in legacy method
+        [switch]$AutoKickoff # ignored in legacy method
     )
 
     $task = @{

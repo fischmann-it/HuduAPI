@@ -1,12 +1,24 @@
 function New-HuduProcedureTaskV241 {
-    <#
-    .SYNOPSIS
-    Create a new procedure task.
+<#
+.SYNOPSIS
+Create a procedure task (Hudu 2.41.0+ behavior).
 
-    .DESCRIPTION
-    Creates a task for either a process template or a run.
-    Some fields only make sense on runs (priority, users, due dates).
-    #>
+.DESCRIPTION
+Creates a task for either a procedure template or a run.
+
+Run-only fields (Priority, UserId, AssignedUsers, DueDate) are only applied
+when the target is a run.
+
+If run-only fields are provided for a template:
+  - They are ignored
+  - A warning is emitted
+
+If -AutoKickoff is specified and the procedure is runnable:
+  - A run is created automatically
+  - The task is created on the run instead
+
+This implementation is intentionally forgiving and will proceed whenever possible.
+#>
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
@@ -22,32 +34,43 @@ function New-HuduProcedureTaskV241 {
         [ValidateSet("unsure", "low", "normal", "high", "urgent")]
         [string]$Priority,
 
-        [Nullable[int]]$UserId,
+        [int]$UserId,
 
         [int[]]$AssignedUsers,
 
         [datetime]$DueDate,
 
-        [switch]$RunTask
+        [switch]$RunTask,
+
+        [switch]$AutoKickoff
     )
 
-    $isRun = Test-HuduProcedureIsRun -ProcedureId $ProcedureId
-    $runParamsPresent = $false
-    foreach ($field in 'Priority','UserId','AssignedUsers','DueDate') {
-        if ($PSBoundParameters.ContainsKey($field)) {
-            $runParamsPresent = $true
-            break
-        }
+    $procedureContext = Get-HuduProcedureContext -ProcedureId $ProcedureId
+    if (-not $procedureContext) {
+        throw "Could not determine procedure context for procedure ID $ProcedureId."
     }
 
-    if ($RunTask -and -not $isRun -and $runParamsPresent) {
-        Write-Verbose "Procedure ID $ProcedureId is not a run. Kicking off a run first."
-        $run = Start-HuduProcedure -ProcedureId $ProcedureId
-        if (-not $run -or -not $run.id) {
-            throw "Failed to kick off a run for procedure ID $ProcedureId."
+    $runOnlyFields = @('Priority','UserId','AssignedUsers','DueDate')
+    $presentRunFields = @($runOnlyFields.Where({ $PSBoundParameters.ContainsKey($_) }))
+    $runParamsPresent = $presentRunFields.Count -gt 0
+
+    $isRun = ($procedureContext.IsRun -eq $true)
+
+    if (-not $isRun -and $AutoKickoff -and $procedureContext.CanKickoff) {
+        Write-Verbose "Procedure ID $ProcedureId is not a run. Attempting to kick off a run first."
+        $run = Start-HuduProcedure -ProcedureId $ProcedureId; $run = $run.procedure ?? $run;
+
+        if ($run -and $run.id) {
+            $ProcedureId = [int]$run.id
+            $isRun = $true
+            Write-Verbose "Created run ID $ProcedureId for task creation."
         }
-        $ProcedureId = [int]$run.id
-        $isRun = $true
+        else {
+            Write-Warning "Failed to kick off a run for procedure ID $ProcedureId. Continuing without run-only fields."
+        }
+    }
+    elseif (-not $isRun -and $RunTask) {
+        Write-Warning "Procedure ID $ProcedureId is not a run. Creating a template/process task instead and ignoring run-only fields."
     }
 
     $task = @{
@@ -56,21 +79,19 @@ function New-HuduProcedureTaskV241 {
     }
 
     if ($PSBoundParameters.ContainsKey('Description')) { $task.description = $Description }
-    if ($PSBoundParameters.ContainsKey('Position'))    { $task.position = $Position }
+    if ($PSBoundParameters.ContainsKey('Position'))    { $task.position    = $Position }
 
     if ($isRun) {
-        if ($PSBoundParameters.ContainsKey('Priority'))      { $task.priority = $Priority }
-        if ($PSBoundParameters.ContainsKey('UserId'))        { $task.user_id = $UserId }
+        if ($PSBoundParameters.ContainsKey('Priority'))      { $task.priority       = $Priority }
+        if ($PSBoundParameters.ContainsKey('UserId'))        { $task.user_id        = $UserId }
         if ($PSBoundParameters.ContainsKey('AssignedUsers')) { $task.assigned_users = $AssignedUsers }
-        if ($PSBoundParameters.ContainsKey('DueDate')) {
-            $task.due_date = $DueDate.ToString('yyyy-MM-dd')
-        }
-    } else {
-        foreach ($field in 'Priority','UserId','AssignedUsers','DueDate') {
-            if ($PSBoundParameters.ContainsKey($field)) {
-                Write-Warning "$field can only be set on tasks for runs. It was ignored for template/process task creation. To Automatically Switch to a run task, use the -RunTask switch."
-            }
-        }
+        if ($PSBoundParameters.ContainsKey('DueDate'))       { $task.due_date       = $DueDate.ToString('yyyy-MM-dd') }
+    } elseif ($runParamsPresent) {
+        [void]$task.Remove('priority')
+        [void]$task.Remove('user_id')
+        [void]$task.Remove('assigned_users')
+        [void]$task.Remove('due_date')
+        Write-Warning ("The following fields can only be set on run tasks and were ignored for procedure/template task creation: {0}" -f ($presentRunFields -join ', '))
     }
 
     $payload = @{ procedure_task = $task } | ConvertTo-Json -Depth 10

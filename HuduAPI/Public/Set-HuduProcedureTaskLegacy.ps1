@@ -11,7 +11,9 @@ function Set-HuduProcedureTaskLegacy {
         [string]$DueDate,
         [ValidateSet("unsure", "low", "normal", "high", "urgent")]
         [string]$Priority,
-        [int[]]$AssignedUsers
+        [int[]]$AssignedUsers,
+        [switch]$RunTask, # ignored in legacy method
+        [switch]$AutoKickoff # ignored in legacy method        
     )
 
     $task = @{}
