@@ -67,7 +67,7 @@ function Get-HuduActivityLogs {
         Params   = $Params
     }
 
-    $AllActivity = Invoke-HuduRequestPaginated -HuduRequest $HuduRequest
+    $AllActivity = Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -PageSize 200
 
     if ($EndDate) {
         $AllActivity = $AllActivity | Where-Object { $([DateTime]::Parse($_.created_at)) -le $EndDate }
