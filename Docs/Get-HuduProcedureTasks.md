@@ -8,7 +8,7 @@ schema: 2.0.0
 # Get-HuduProcedureTasks
 
 ## SYNOPSIS
-Retrieve procedure tasks
+Retrieve procedure tasks.
 
 ## SYNTAX
 
@@ -18,24 +18,21 @@ Get-HuduProcedureTasks [[-Id] <Int32>] [[-ProcedureId] <Int32>] [[-Name] <String
 ```
 
 ## DESCRIPTION
-Retrieves either a list of procedure tasks based on filters or a specific task by ID.
+{{ Fill in the Description }}
 
 ## EXAMPLES
 
-### EXAMPLE 1
-```
-Get-HuduProcedureTasks -ProcedureId 123
+### Example 1
+```powershell
+PS C:\> {{ Add example code here }}
 ```
 
-### EXAMPLE 2
-```
-Get-HuduProcedureTasks -Id 999
-```
+{{ Add example description here }}
 
 ## PARAMETERS
 
 ### -Id
-Task ID to retrieve
+{{ Fill Id Description }}
 
 ```yaml
 Type: Int32
@@ -50,7 +47,7 @@ Accept wildcard characters: False
 ```
 
 ### -ProcedureId
-Filter by procedure ID
+{{ Fill ProcedureId Description }}
 
 ```yaml
 Type: Int32
@@ -65,7 +62,7 @@ Accept wildcard characters: False
 ```
 
 ### -Name
-Filter by task name
+{{ Fill Name Description }}
 
 ```yaml
 Type: String
@@ -80,7 +77,7 @@ Accept wildcard characters: False
 ```
 
 ### -CompanyId
-Filter by company ID
+{{ Fill CompanyId Description }}
 
 ```yaml
 Type: Int32

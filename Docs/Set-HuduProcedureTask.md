@@ -8,30 +8,59 @@ schema: 2.0.0
 # Set-HuduProcedureTask
 
 ## SYNOPSIS
-Update an existing procedure task
+Update a procedure task.
 
 ## SYNTAX
 
 ```
 Set-HuduProcedureTask [-Id] <Int32> [[-Name] <String>] [[-Description] <String>] [[-Completed] <Boolean>]
  [[-ProcedureId] <Int32>] [[-Position] <Int32>] [[-UserId] <Int32>] [[-DueDate] <String>]
- [[-Priority] <String>] [[-AssignedUsers] <Int32[]>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [[-Priority] <String>] [[-AssignedUsers] <Int32[]>] [-RunTask] [-AutoKickoff]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Updates attributes of a procedure task.
+Updates an existing procedure task associated with either a procedure template
+or a procedure run.
+
+Behavior differs depending on Hudu version:
+
+- Pre-2.41.0:
+  Tasks are updated using legacy behavior.
+All provided fields are accepted.
+
+- 2.41.0 and later:
+  Tasks may belong to either a procedure template or a run.
+
+Run-only fields:
+  The following parameters only apply to tasks associated with runs:
+    - Priority
+    - UserId
+    - AssignedUsers
+    - DueDate
+
+Forgiving behavior:
+  - If run-only fields are provided for a non-run task, they are ignored and a warning is emitted.
+  - The command will still update all compatible fields.
+  - Unlike creation, updates will not automatically create or switch to a run context.
+
+Notes:
+  - Changing ProcedureId will update the task's associated procedure if supported by the API.
+  - -RunTask indicates intent but does not force run behavior.
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
+```powershell
+PS C:\> {{ Add example code here }}
 ```
-Set-HuduProcedureTask -Id 101 -Completed $true
-```
+
+{{ Add example description here }}
 
 ## PARAMETERS
 
 ### -Id
-ID of the task to update
+ID of the procedure task to update.
 
 ```yaml
 Type: Int32
@@ -46,7 +75,7 @@ Accept wildcard characters: False
 ```
 
 ### -Name
-New name
+New task name.
 
 ```yaml
 Type: String
@@ -61,7 +90,7 @@ Accept wildcard characters: False
 ```
 
 ### -Description
-New description
+New task description.
 
 ```yaml
 Type: String
@@ -76,7 +105,7 @@ Accept wildcard characters: False
 ```
 
 ### -Completed
-Mark task as completed/uncompleted
+Mark the task as completed or not.
 
 ```yaml
 Type: Boolean
@@ -91,7 +120,7 @@ Accept wildcard characters: False
 ```
 
 ### -ProcedureId
-New procedure ID to reassign task
+Reassign the task to a different procedure or run.
 
 ```yaml
 Type: Int32
@@ -106,7 +135,7 @@ Accept wildcard characters: False
 ```
 
 ### -Position
-Task position in procedure
+Update task ordering position.
 
 ```yaml
 Type: Int32
@@ -121,7 +150,8 @@ Accept wildcard characters: False
 ```
 
 ### -UserId
-Single user assignment
+Run-only.
+Single user assignment.
 
 ```yaml
 Type: Int32
@@ -136,7 +166,8 @@ Accept wildcard characters: False
 ```
 
 ### -DueDate
-Due date (YYYY-MM-DD)
+Run-only.
+Due date.
 
 ```yaml
 Type: String
@@ -151,7 +182,8 @@ Accept wildcard characters: False
 ```
 
 ### -Priority
-Task priority
+Run-only.
+Task priority.
 
 ```yaml
 Type: String
@@ -166,7 +198,8 @@ Accept wildcard characters: False
 ```
 
 ### -AssignedUsers
-Array of user IDs
+Run-only.
+Array of user IDs.
 
 ```yaml
 Type: Int32[]
@@ -176,6 +209,39 @@ Aliases:
 Required: False
 Position: 10
 Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -RunTask
+Indicates intent to operate on a run task.
+If the target is not a run,
+run-only fields will be ignored.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -AutoKickoff
+(Not typically used for updates.) Included for compatibility; does not
+automatically convert a template task into a run task.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

@@ -8,35 +8,40 @@ schema: 2.0.0
 # Start-HuduProcedure
 
 ## SYNOPSIS
-Kickoff a procedure as a live process instance
+Start a run from an existing company procedure.
 
 ## SYNTAX
 
 ```
-Start-HuduProcedure [-Id] <Int32> [[-AssetId] <Int32>] [[-Name] <String>] [-ProgressAction <ActionPreference>]
- [<CommonParameters>]
+Start-HuduProcedure [-ProcedureId] <Int32> [[-AssetId] <Int32>] [[-Name] <String>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Starts a new process instance from a template or existing procedure.
-Optionally associates the process with an asset or renames it.
+Creates a new run by calling POST /api/v1/procedures/{id}/kickoff.
+
+Only company procedures can be kicked off.
+Global templates must first be copied to a company procedure.
+If the target is already a run, kickoff is not performed.
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
+```powershell
+PS C:\> {{ Add example code here }}
 ```
-Kickoff-HuduProcedure -Id 42 -AssetId 1001 -Name "Quarterly Maintenance Run"
-```
+
+{{ Add example description here }}
 
 ## PARAMETERS
 
-### -Id
-ID of the procedure to kickoff
+### -ProcedureId
+ID of the procedure to kick off.
 
 ```yaml
 Type: Int32
 Parameter Sets: (All)
-Aliases:
+Aliases: Id
 
 Required: True
 Position: 1
@@ -46,7 +51,7 @@ Accept wildcard characters: False
 ```
 
 ### -AssetId
-Optional asset ID to attach the new process to
+Optional asset ID to associate with the new run.
 
 ```yaml
 Type: Int32
@@ -61,7 +66,7 @@ Accept wildcard characters: False
 ```
 
 ### -Name
-Optional new name for the kicked off procedure instance
+Optional name for the new run.
 
 ```yaml
 Type: String

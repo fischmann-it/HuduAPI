@@ -12,7 +12,7 @@
     RootModule        = '.\HuduAPI.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '3.14.15'
+    ModuleVersion     = '3.19.98'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -70,6 +70,7 @@
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
     FunctionsToExport =	
+    'Copy-HuduProcedure',
     'Get-HuduActivityLogs',
     'Get-HuduAPIKey',
     'Get-HuduAppInfo',
@@ -83,9 +84,9 @@
     'Get-HuduCompanyFolders',
     'Get-HuduFolderCleanName',
     'Get-HuduExpirations',
-    'Get-HuduExports',
     'Get-HuduFlags',
-    'Get-HuduFlagTypes',    
+    'Get-HuduFlagTypes',
+    'Get-HuduExports',
     'Get-HuduFolderMap',
     'Get-HuduFolders',
     'Get-HuduGroups',
@@ -99,6 +100,7 @@
     'Get-HuduPasswordFolders',
     'Get-HuduProcedures',
     'Get-HuduProcedureTasks',
+    'Get-HuduPhotos',
     'Get-HuduPublicPhotos',
     'Get-HuduRackStorageItems',
     'Get-HuduRackStorages',
@@ -122,7 +124,7 @@
     'New-HuduCompany',
     'New-HuduCustomHeaders',
     'New-HuduFlag',
-    'New-HuduFlagType',
+    'New-HuduFlagType',    
     'New-HuduFolder',
     'New-HuduIPAddress',
     'New-HuduList',
@@ -130,6 +132,7 @@
     'New-HuduPassword',
     'New-HuduPasswordFolder',
     'New-HuduPublicPhoto',
+    'New-HuduPhoto',
     'New-HuduProcedure',
     'New-HuduProcedureTask',
     'New-HuduProcedureFromTemplate',
@@ -150,13 +153,14 @@
     'Remove-HuduCompany',
     'Remove-HuduCustomHeaders',
     'Remove-HuduFlag',
-    'Remove-HuduFlagType',    
+    'Remove-HuduFlagType',
     'Remove-HuduIPAddress',
     'Remove-HuduList',
     'Remove-HuduMagicDash',
     'Remove-HuduNetwork',
     'Remove-HuduPassword',
     'Remove-HuduPasswordFolder',
+    'Remove-HuduPhoto',
     'Remove-HuduProcedure',
     'Remove-HuduProcedureTask',
     'Remove-HuduRackStorageItem',
@@ -191,6 +195,7 @@
     'Set-HuduPasswordFolder',
     'Set-HuduPasswordArchive',
     'Set-HuduPublicPhoto',
+    'Set-HuduPhoto',
     'Set-HuduVLAN',
     'Set-HuduVLANZone',
     'Set-HuduRackStorageItem',

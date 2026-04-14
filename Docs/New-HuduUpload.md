@@ -51,7 +51,7 @@ Accept wildcard characters: False
 ```yaml
 Type: Int32
 Parameter Sets: (All)
-Aliases: record_id, recordid
+Aliases: record_id, recordid, uploadableid
 
 Required: True
 Position: 2
@@ -66,7 +66,7 @@ Accept wildcard characters: False
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases: record_type, recordtype
+Aliases: record_type, recordtype, uploadabletype
 
 Required: True
 Position: 3

@@ -8,35 +8,45 @@ schema: 2.0.0
 # New-HuduProcedureFromTemplate
 
 ## SYNOPSIS
-Create a new procedure from an existing template
+Create a new process from a global template.
 
 ## SYNTAX
 
 ```
-New-HuduProcedureFromTemplate [-Id] <Int32> [[-CompanyId] <Int32>] [[-Name] <String>] [[-Description] <String>]
- [-ProgressAction <ActionPreference>] [<CommonParameters>]
+New-HuduProcedureFromTemplate [-ProcedureId] <Int32> [[-CompanyId] <Int32>] [[-Name] <String>]
+ [[-Description] <String>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Creates a new procedure (template or process) by cloning an existing one.
-If no company_id is provided, a global template is created.
+Calls POST /api/v1/procedures/{id}/create_from_template.
+
+The source procedure must be a global template.
+
+Behavior:
+- If CompanyId is supplied, creates a company-specific process.
+- If CompanyId is omitted, creates another global template copy.
+
+This cmdlet creates a process/template copy only.
+It does not create a run.
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
+```powershell
+PS C:\> {{ Add example code here }}
 ```
-New-HuduProcedureFromTemplate -Id 50 -CompanyId 456 -Name "Client Onboarding Clone"
-```
+
+{{ Add example description here }}
 
 ## PARAMETERS
 
-### -Id
-ID of the template procedure to clone
+### -ProcedureId
+ID of the global template to copy from.
 
 ```yaml
 Type: Int32
 Parameter Sets: (All)
-Aliases:
+Aliases: Id
 
 Required: True
 Position: 1
@@ -46,8 +56,8 @@ Accept wildcard characters: False
 ```
 
 ### -CompanyId
-Optional company ID.
-If omitted, creates a global template.
+Optional company ID for the new process.
+If omitted, a new global template copy is created.
 
 ```yaml
 Type: Int32
@@ -62,7 +72,7 @@ Accept wildcard characters: False
 ```
 
 ### -Name
-Optional new name for the new procedure
+Optional new name for the copied process.
 
 ```yaml
 Type: String
@@ -77,7 +87,7 @@ Accept wildcard characters: False
 ```
 
 ### -Description
-Optional description for the new procedure
+Optional new description for the copied process.
 
 ```yaml
 Type: String

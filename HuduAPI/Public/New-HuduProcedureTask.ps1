@@ -1,38 +1,73 @@
 function New-HuduProcedureTask {
-    <#
-    .SYNOPSIS
-    Create a new procedure task
+<#
+.SYNOPSIS
+Create a new procedure task.
 
-    .DESCRIPTION
-    Creates a new task associated with a procedure.
+.DESCRIPTION
+Creates a new task associated with a procedure or procedure run.
 
-    .PARAMETER Name
-    Name of the task
+Behavior differs depending on Hudu version:
 
-    .PARAMETER ProcedureId
-    ID of the procedure to attach the task to
+- Pre-2.41.0:
+  Tasks are created using legacy behavior. All provided fields are accepted
+  and applied directly to the procedure task.
 
-    .PARAMETER Description
-    Optional task description
+- 2.41.0 and later:
+  Procedures are split into templates (processes) and runs (executions).
+  Tasks may belong to either context.
 
-    .PARAMETER Priority
-    Optional priority level (e.g., "unsure", "low", "normal", "high", "urgent")
+Run-only fields:
+  The following parameters only apply to tasks associated with runs:
+    - Priority
+    - UserId
+    - AssignedUsers
+    - DueDate
 
-    .PARAMETER UserId
-    Optional single user assignment
+Forgiving behavior:
+  - If run-only fields are provided for a non-run procedure, they are ignored
+    and a warning is emitted.
+  - If -AutoKickoff is specified and the procedure can be run, a run will be
+    created automatically and the task will be associated with that run.
+  - If -RunTask is specified but the target is not a run, the command will
+    continue and create a template task, ignoring run-only fields.
 
-    .PARAMETER AssignedUsers
-    Optional array of user IDs to assign
+This cmdlet is designed to be forgiving and will attempt to create the task
+whenever possible, even if some parameters are not applicable in the current context.
 
-    .PARAMETER DueDate
-    Optional due date (YYYY-MM-DD)
+.PARAMETER Name
+Name of the task.
 
-    .PARAMETER Position
-    Optional ordering position
+.PARAMETER ProcedureId
+ID of the procedure or run to attach the task to.
 
-    .EXAMPLE
-    New-HuduProcedureTask -Name "Initial Review" -ProcedureId 123 -Priority "high"
-    #>
+.PARAMETER Description
+Optional task description.
+
+.PARAMETER Priority
+Run-only. Priority level for the task.
+
+.PARAMETER UserId
+Run-only. Single user assignment.
+
+.PARAMETER AssignedUsers
+Run-only. Array of user IDs to assign.
+
+.PARAMETER DueDate
+Run-only. Due date for the task.
+
+.PARAMETER Position
+Optional ordering position.
+
+.PARAMETER RunTask
+Indicates intent to create a task on a run.
+If the target is not a run, the command will attempt to proceed and may ignore
+run-only fields.
+
+.PARAMETER AutoKickoff
+If specified and the target is a runnable procedure template, a run will be
+created automatically and the task will be associated with that run.
+
+#>
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)] [string]$Name,
@@ -43,28 +78,19 @@ function New-HuduProcedureTask {
         [int]$UserId,
         [int[]]$AssignedUsers,
         [string]$DueDate,
-        [int]$Position
-    )
+        [int]$Position,
+        # 2.41.0+ only
+        [switch]$RunTask,
+        [switch]$AutoKickoff
+        )
 
-    $task = @{
-        name         = $Name
-        procedure_id = $ProcedureId
+    if (-not $script:HuduVersion) {
+        [version]$script:HuduVersion = (Get-HuduAppInfo).version
     }
 
-    if ($Description)    { $task.description     = $Description }
-    if ($Priority)       { $task.priority        = $Priority }
-    if ($UserId)         { $task.user_id         = $UserId }
-    if ($AssignedUsers)  { $task.assigned_users  = $AssignedUsers }
-    if ($DueDate)        { $task.due_date        = $DueDate }
-    if ($Position)       { $task.position        = $Position }
-
-    $payload = @{ procedure_task = $task } | ConvertTo-Json -Depth 10
-
-    try {
-        $res = Invoke-HuduRequest -Method POST -Resource "/api/v1/procedure_tasks" -Body $payload
-        return $res.procedure_task
-    } catch {
-        Write-Warning "Failed to create procedure task '$Name'"
-        return $null
+    if ($script:HuduVersion -lt [version]'2.41.0') {
+        return New-HuduProcedureTaskLegacy @PSBoundParameters
     }
+
+    return New-HuduProcedureTaskV241 @PSBoundParameters
 }

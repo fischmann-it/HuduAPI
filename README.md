@@ -8,7 +8,7 @@ https://github.com/lwhitelock/HuduAPI/releases
 
 ## Implemented Commands
 	Get-HuduActivityLogs
-	Get-HuduApiKey
+	Get-HuduAPIKey
 	Get-HuduAppInfo
 	Get-HuduArticles
 	Get-HuduAssetLayoutFieldID
@@ -17,32 +17,41 @@ https://github.com/lwhitelock/HuduAPI/releases
 	Get-HuduBaseURL
 	Get-HuduCard
 	Get-HuduCompanies
+	Get-HuduCompanyFolders
+	Get-HuduFolderCleanName
 	Get-HuduExpirations
+	Get-HuduFlags
+	Get-HuduFlagTypes
+	Get-HuduExports
 	Get-HuduFolderMap
 	Get-HuduFolders
 	Get-HuduGroups
-	Get-HuduIntegrationMatchers
 	Get-HuduIPAddresses
+	Get-HuduIntegrationMatchers
 	Get-HuduLists
+	Get-HuduNetworks
 	Get-HuduMagicDashes
 	Get-HuduNetworks
-	Get-HuduObjectByUrl
-	Get-HuduPasswordFolders
 	Get-HuduPasswords
+	Get-HuduPasswordFolders
 	Get-HuduProcedures
 	Get-HuduProcedureTasks
+	Get-HuduPhotos
 	Get-HuduPublicPhotos
 	Get-HuduRackStorageItems
 	Get-HuduRackStorages
 	Get-HuduRelations
+	Get-HuduSubFolders
 	Get-HuduUploads
-	Get-HuduUsers
 	Get-HuduVLANs
 	Get-HuduVLANZones
+	Get-HuduUsers
+	Get-HuduUsers
+	Get-HuduVLANs
+	Get-HuduVLANZones    
 	Get-HuduWebsites
 	Initialize-HuduFolder
-	Move-HuduAssetsToNewLayout
-	Move-HuduAssetsToNewLayoutDeprecated
+	Invoke-HuduRequest
 	New-HuduAPIKey
 	New-HuduArticle
 	New-HuduAsset
@@ -50,18 +59,24 @@ https://github.com/lwhitelock/HuduAPI/releases
 	New-HuduBaseURL
 	New-HuduCompany
 	New-HuduCustomHeaders
+	New-HuduFlag
+	New-HuduFlagType    
 	New-HuduFolder
 	New-HuduIPAddress
 	New-HuduList
 	New-HuduNetwork
 	New-HuduPassword
 	New-HuduPasswordFolder
-	New-HuduProcedure
-	New-HuduProcedureFromTemplate
-	New-HuduProcedureTask
 	New-HuduPublicPhoto
-	New-HuduRackStorage
+	New-HuduPhoto
+	New-HuduProcedure
+	New-HuduProcedureTask
+	New-HuduProcedureFromTemplate
 	New-HuduRackStorageItem
+	New-HuduRackStorage    
+	New-HuduProcedure
+	New-HuduProcedureTask
+	New-HuduProcedureFromTemplate
 	New-HuduRelation
 	New-HuduUpload
 	New-HuduVLAN
@@ -73,22 +88,27 @@ https://github.com/lwhitelock/HuduAPI/releases
 	Remove-HuduBaseURL
 	Remove-HuduCompany
 	Remove-HuduCustomHeaders
+	Remove-HuduFlag
+	Remove-HuduFlagType
 	Remove-HuduIPAddress
 	Remove-HuduList
 	Remove-HuduMagicDash
 	Remove-HuduNetwork
 	Remove-HuduPassword
 	Remove-HuduPasswordFolder
+	Remove-HuduPhoto
 	Remove-HuduProcedure
 	Remove-HuduProcedureTask
-	Remove-HuduRackStorage
 	Remove-HuduRackStorageItem
+	Remove-HuduRackStorage    
+	Remove-HuduProcedure
+	Remove-HuduProcedureTask 
 	Remove-HuduRelation
 	Remove-HuduUpload
 	Remove-HuduVLAN
 	Remove-HuduVLANZone
 	Remove-HuduWebsite
-	Set-HapiErrorsDirectory
+	Save-HuduExports
 	Set-HuduArticle
 	Set-HuduArticleArchive
 	Set-HuduAsset
@@ -97,25 +117,32 @@ https://github.com/lwhitelock/HuduAPI/releases
 	Set-HuduAssetLayoutField
 	Set-HuduCompany
 	Set-HuduCompanyArchive
+	Set-HuduFlag
+	Set-HuduFlagType    
 	Set-HuduFolder
 	Set-HuduIntegrationMatcher
 	Set-HuduIPAddress
 	Set-HuduList
 	Set-HuduMagicDash
 	Set-HuduNetwork
-	Set-HuduPassword
-	Set-HuduPasswordArchive
-	Set-HuduPasswordFolder
 	Set-HuduProcedure
 	Set-HuduProcedureTask
-	Set-HuduRackStorage
-	Set-HuduRackStorageItem
+	Set-HuduPassword
+	Set-HuduPasswordFolder
+	Set-HuduPasswordArchive
+	Set-HuduPublicPhoto
+	Set-HuduPhoto
 	Set-HuduVLAN
 	Set-HuduVLANZone
+	Set-HuduRackStorageItem
+	Set-HuduRackStorage
+	Set-HuduVLAN
+	Set-HuduVLANZone    
 	Set-HuduWebsite
-	Start-HuduExport
 	Start-HuduProcedure
+	Start-HuduExport
 	Start-HuduS3Export
+	Set-HapiErrorsDirectory
 
 ## Usage
 For examples please see my blog: https://mspp.io/category/hudu/ or this repository https://github.com/lwhitelock/HuduAutomation
@@ -178,5 +205,17 @@ You can either user id or you can use title and company_name together
     
     New-HuduArticle -name "Test" -content "<p>Html content of article</p>" -folder_id 100 -company_id 20
 Name and Content are mandatory, folder_id and company_id are optional. Setting no company ID adds to the global KB
+
+## Community & Socials
+
+[![Hudu Community](https://img.shields.io/badge/Community-Forum-blue?logo=discourse)](https://community.hudu.com/)
+[![Reddit](https://img.shields.io/badge/Reddit-r%2Fhudu-FF4500?logo=reddit)](https://www.reddit.com/r/hudu)
+[![YouTube](https://img.shields.io/badge/YouTube-Hudu-red?logo=youtube)](https://www.youtube.com/@hudu1715)
+[![X (Twitter)](https://img.shields.io/badge/X-@HuduHQ-black?logo=x)](https://x.com/HuduHQ)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Hudu_Technologies-0A66C2?logo=linkedin)](https://www.linkedin.com/company/hudu-technologies/)
+[![Facebook](https://img.shields.io/badge/Facebook-HuduHQ-1877F2?logo=facebook)](https://www.facebook.com/HuduHQ/)
+[![Instagram](https://img.shields.io/badge/Instagram-@huduhq-E4405F?logo=instagram)](https://www.instagram.com/huduhq/)
+[![Feature Requests](https://img.shields.io/badge/Feedback-Feature_Requests-brightgreen?logo=github)](https://hudu.canny.io/)
+
     
     Set-HuduArticle -name "Test" -content "<p>Html content of article</p>" -folder_id 100 -company_id 20 -article_id 10
